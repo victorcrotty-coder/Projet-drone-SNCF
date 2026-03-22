@@ -1,0 +1,1193 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNCF Groupe — Gestion Drones</title>
+<link href="https://fonts.googleapis.com/css2?family=Marianne:wght@400;500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sncf-red: #C3002F;
+    --sncf-dark: #1A1A2E;
+    --bg: #F4F5F7;
+    --white: #FFFFFF;
+    --sidebar-w: 64px;
+    --card-radius: 12px;
+    --text: #1C1C1E;
+    --muted: #8E8E93;
+    --border: #E5E5EA;
+    --green: #34C759;
+    --orange: #FF9500;
+    --red-dot: #FF3B30;
+    --blue: #007AFF;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+font-family: 'DM Sans', sans-serif;
+background: var(--bg);
+color: var(--text);
+display: flex;
+height: 100vh;
+overflow: hidden;
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+width: var(--sidebar-w);
+background: var(--white);
+border-right: 1px solid var(--border);
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 16px 0;
+gap: 6px;
+flex-shrink: 0;
+z-index: 10;
+}
+
+.sidebar .logo {
+width: 40px;
+height: 40px;
+margin-bottom: 16px;
+}
+
+.sidebar .logo svg { width: 100%; height: 100%; }
+
+.nav-btn {
+width: 44px;
+height: 44px;
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+border: none;
+background: transparent;
+color: var(--muted);
+transition: all .18s ease;
+font-size: 18px;
+}
+
+.nav-btn:hover { background: var(--bg); color: var(--text); }
+.nav-btn.active { background: var(--sncf-dark); color: var(--white); }
+
+/* ─── Main ─── */
+.main {
+flex: 1;
+overflow: hidden;
+display: flex;
+flex-direction: column;
+}
+
+/* ─── Pages ─── */
+.page {
+display: none;
+flex: 1;
+overflow-y: auto;
+padding: 32px 28px;
+animation: fadeIn .2s ease;
+}
+
+.page.active { display: flex; flex-direction: column; gap: 24px; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.page-title {
+font-family: 'DM Sans', sans-serif;
+font-size: 28px;
+font-weight: 600;
+color: var(--text);
+padding-bottom: 12px;
+border-bottom: 2px solid var(--sncf-red);
+width: fit-content;
+letter-spacing: -0.5px;
+}
+
+/* ─── Cards ─── */
+.card {
+background: var(--white);
+border-radius: var(--card-radius);
+padding: 20px;
+box-shadow: var(--shadow);
+}
+
+.card-title {
+font-weight: 600;
+font-size: 15px;
+color: var(--text);
+margin-bottom: 14px;
+}
+
+/* ─── Grid layouts ─── */
+.row { display: flex; gap: 20px; }
+.col { flex: 1; }
+
+/* ─── Form elements ─── */
+.field-label {
+font-size: 12px;
+color: var(--muted);
+margin-bottom: 4px;
+font-weight: 500;
+text-transform: uppercase;
+letter-spacing: .4px;
+}
+
+.field {
+width: 100%;
+padding: 10px 14px;
+border: 1px solid var(--border);
+border-radius: 8px;
+font-size: 14px;
+font-family: inherit;
+background: var(--bg);
+color: var(--text);
+outline: none;
+transition: border-color .15s;
+}
+
+.field:focus { border-color: var(--sncf-red); }
+
+select.field { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238E8E93' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+.form-row { display: flex; gap: 12px; }
+.form-row .form-group { flex: 1; }
+.form-group { margin-bottom: 14px; }
+
+.btn-primary {
+background: var(--sncf-red);
+color: white;
+border: none;
+padding: 10px 22px;
+border-radius: 8px;
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
+font-family: inherit;
+transition: background .15s, transform .1s;
+}
+
+.btn-primary:hover { background: #a8002a; transform: translateY(-1px); }
+
+.btn-ghost {
+background: var(--bg);
+color: var(--text);
+border: 1px solid var(--border);
+padding: 10px 18px;
+border-radius: 8px;
+font-size: 14px;
+font-weight: 500;
+cursor: pointer;
+font-family: inherit;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+
+.link-more {
+font-size: 13px;
+color: var(--blue);
+text-decoration: none;
+cursor: pointer;
+font-weight: 500;
+}
+
+.link-more:hover { text-decoration: underline; }
+
+/* ─── Table ─── */
+table {
+width: 100%;
+border-collapse: collapse;
+font-size: 13.5px;
+}
+
+thead th {
+text-align: left;
+padding: 8px 10px;
+color: var(--muted);
+font-weight: 500;
+font-size: 12px;
+text-transform: uppercase;
+letter-spacing: .4px;
+border-bottom: 1px solid var(--border);
+}
+
+tbody tr {
+border-bottom: 1px solid var(--border);
+cursor: pointer;
+transition: background .12s;
+}
+
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--bg); }
+
+td {
+padding: 10px 10px;
+color: var(--text);
+}
+
+.td-arrow { color: var(--muted); text-align: right; font-size: 16px; }
+
+/* ─── Status dots ─── */
+.dot {
+width: 10px; height: 10px;
+border-radius: 50%;
+display: inline-block;
+}
+.dot-green { background: var(--green); box-shadow: 0 0 6px rgba(52,199,89,.5); }
+.dot-orange { background: var(--orange); }
+.dot-red { background: var(--red-dot); }
+
+/* ─── Status badge ─── */
+.badge {
+display: inline-flex;
+align-items: center;
+gap: 4px;
+font-size: 12px;
+font-weight: 500;
+padding: 3px 8px;
+border-radius: 20px;
+}
+.badge-active { background: #e6f9ed; color: #1a8a37; }
+.badge-inactive { background: #f0f0f5; color: var(--muted); }
+.badge-charge { background: #fff3e0; color: #b95e00; }
+.badge-maint { background: #ffeef0; color: var(--sncf-red); }
+
+/* ─── Mission live card ─── */
+.mission-live {
+position: relative;
+border-radius: 10px;
+overflow: hidden;
+cursor: pointer;
+}
+
+.mission-live img {
+width: 100%;
+height: 140px;
+object-fit: cover;
+display: block;
+background: #2d3748;
+}
+
+.mission-live-placeholder {
+width: 100%;
+height: 140px;
+background: linear-gradient(135deg, #1a2744 0%, #2d4a6e 100%);
+display: flex;
+align-items: center;
+justify-content: center;
+position: relative;
+overflow: hidden;
+}
+
+.rail-art {
+position: absolute;
+inset: 0;
+opacity: .3;
+background-image: repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(255,255,255,.15) 18px, rgba(255,255,255,.15) 19px),
+repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(255,255,255,.08) 60px, rgba(255,255,255,.08) 62px);
+}
+
+.live-badge {
+position: absolute;
+bottom: 8px; left: 8px;
+background: var(--sncf-red);
+color: white;
+font-size: 11px;
+font-weight: 700;
+padding: 3px 8px;
+border-radius: 4px;
+display: flex;
+align-items: center;
+gap: 4px;
+letter-spacing: .5px;
+}
+
+.live-badge::before {
+content: '';
+width: 6px; height: 6px;
+background: white;
+border-radius: 50%;
+animation: pulse 1s infinite;
+}
+
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+
+/* ─── Mission history ─── */
+.history-item {
+padding: 10px 14px;
+background: var(--bg);
+border-radius: 8px;
+font-size: 13px;
+color: var(--text);
+margin-bottom: 6px;
+cursor: pointer;
+transition: background .12s;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.history-item:hover { background: #e8e8ef; }
+
+/* ─── Incident box ─── */
+.incident-item {
+padding: 8px 0;
+border-bottom: 1px solid var(--border);
+font-size: 13px;
+color: var(--text);
+display: flex;
+align-items: flex-start;
+gap: 8px;
+}
+.incident-item:last-child { border-bottom: none; }
+.incident-dot { width: 6px; height: 6px; background: var(--sncf-red); border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+
+/* ─── Maintenance item ─── */
+.maint-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 9px 0;
+border-bottom: 1px solid var(--border);
+font-size: 13px;
+cursor: pointer;
+}
+.maint-item:last-child { border-bottom: none; }
+.maint-item:hover { color: var(--blue); }
+
+/* ─── MAP placeholder ─── */
+.map-placeholder {
+width: 100%;
+height: 240px;
+border-radius: 10px;
+overflow: hidden;
+position: relative;
+background: #dce8d4;
+}
+
+.map-placeholder svg { width: 100%; height: 100%; }
+
+/* ─── Data map colored lines ─── */
+.data-map {
+width: 100%;
+height: 300px;
+border-radius: 10px;
+overflow: hidden;
+background: #e8f0e8;
+position: relative;
+margin-bottom: 20px;
+}
+
+/* ─── Rapport PDF button ─── */
+.btn-pdf {
+background: #f0f0f5;
+border: none;
+padding: 5px 10px;
+border-radius: 6px;
+font-size: 12px;
+font-weight: 600;
+color: var(--text);
+cursor: pointer;
+font-family: inherit;
+}
+
+.btn-pdf:hover { background: var(--border); }
+
+/* ─── Slider input ─── */
+.slider-row {
+display: flex;
+align-items: center;
+gap: 10px;
+margin-bottom: 10px;
+}
+
+.slider-label {
+font-size: 13px;
+color: var(--text);
+min-width: 120px;
+}
+
+input[type=range] {
+flex: 1;
+accent-color: var(--sncf-red);
+height: 4px;
+}
+
+.slider-val {
+font-size: 13px;
+font-weight: 600;
+color: var(--sncf-red);
+min-width: 36px;
+text-align: right;
+}
+
+/* ─── Advanced params add btn ─── */
+.add-step {
+display: flex;
+align-items: center;
+gap: 6px;
+font-size: 13.5px;
+color: var(--muted);
+cursor: pointer;
+padding: 8px 0;
+border: 1px dashed var(--border);
+border-radius: 8px;
+justify-content: center;
+transition: all .15s;
+margin-bottom: 14px;
+}
+.add-step:hover { border-color: var(--sncf-red); color: var(--sncf-red); }
+
+/* ─── Tab row ─── */
+.tab-row {
+display: flex;
+gap: 8px;
+}
+
+.tab-btn {
+padding: 8px 18px;
+border-radius: 8px;
+border: 1px solid var(--border);
+background: var(--white);
+font-size: 13px;
+font-weight: 500;
+cursor: pointer;
+font-family: inherit;
+color: var(--muted);
+transition: all .15s;
+}
+
+.tab-btn.active, .tab-btn:hover {
+background: var(--sncf-dark);
+color: white;
+border-color: var(--sncf-dark);
+}
+
+/* ─── Station map dots ─── */
+.station-dot {
+width: 10px; height: 10px;
+border-radius: 50%;
+background: var(--sncf-red);
+position: absolute;
+transform: translate(-50%, -50%);
+box-shadow: 0 0 0 3px rgba(195,0,47,.25);
+cursor: pointer;
+transition: transform .15s;
+}
+
+.station-dot:hover { transform: translate(-50%,-50%) scale(1.5); }
+
+.gravity-bar {
+display: flex;
+gap: 3px;
+}
+
+.gbar {
+width: 8px; height: 14px;
+border-radius: 2px;
+background: var(--border);
+}
+.gbar.filled { background: var(--sncf-red); }
+
+/* Score IA */
+.score-ia {
+display: inline-flex;
+align-items: center;
+gap: 4px;
+font-weight: 600;
+color: var(--green);
+font-size: 13px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* ─── Station battery table ─── */
+.batt-table td { padding: 8px 10px; font-size: 13px; }
+
+/* SNCF Logo SVG */
+.sncf-logo {
+background: var(--sncf-red);
+border-radius: 6px;
+width: 40px; height: 28px;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-size: 9px;
+font-weight: 800;
+letter-spacing: .5px;
+flex-shrink: 0;
+margin-bottom: 4px;
+}
+
+.logo-wrap {
+display: flex;
+flex-direction: column;
+align-items: center;
+margin-bottom: 16px;
+gap: 2px;
+}
+
+.logo-sub {
+font-size: 7px;
+font-weight: 600;
+color: var(--muted);
+letter-spacing: .3px;
+}
+
+.section-divider {
+width: 28px;
+height: 1px;
+background: var(--border);
+margin: 8px auto;
+}
+
+.page-header { display: flex; align-items: center; justify-content: space-between; }
+
+.header-actions { display: flex; gap: 10px; align-items: center; }
+
+.search-box {
+display: flex;
+align-items: center;
+gap: 8px;
+background: var(--white);
+border: 1px solid var(--border);
+border-radius: 8px;
+padding: 7px 14px;
+font-size: 13.5px;
+color: var(--muted);
+cursor: pointer;
+box-shadow: var(--shadow);
+}
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+
+<nav class="sidebar">
+  <div class="logo-wrap">
+    <div class="sncf-logo">SNCF</div>
+    <span class="logo-sub">GROUPE</span>
+  </div>
+  <div class="section-divider"></div>
+
+  <!-- Mission -->
+  <button class="nav-btn active" id="nav-mission" onclick="showPage('mission')" title="Mission">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
+  </button>
+
+  <!-- Drone -->
+  <button class="nav-btn" id="nav-drone" onclick="showPage('drone')" title="Drones">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M6 6a2 2 0 0 1 2 -2"/><path d="M16 6a2 2 0 0 0 -2 -2"/><path d="M6 18a2 2 0 0 0 2 2"/><path d="M16 18a2 2 0 0 1 -2 2"/><path d="M4 8l-2 -2"/><path d="M20 8l2 -2"/><path d="M4 16l-2 2"/><path d="M20 16l2 2"/></svg>
+  </button>
+
+  <!-- Station -->
+  <button class="nav-btn" id="nav-station" onclick="showPage('station')" title="Stations">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><path d="M5.64 5.64l2.12 2.12M16.24 16.24l2.12 2.12M5.64 18.36l2.12-2.12M16.24 7.76l2.12-2.12"/></svg>
+  </button>
+
+  <!-- Données -->
+  <button class="nav-btn" id="nav-donnees" onclick="showPage('donnees')" title="Données">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+  </button>
+
+  <div style="flex:1"></div>
+
+  <!-- Settings -->
+  <button class="nav-btn" title="Paramètres">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </button>
+</nav>
+
+<!-- ═══════════════ PAGES ═══════════════ -->
+
+<main class="main">
+
+  <!-- ──────── PAGE : MISSION ──────── -->
+
+  <div class="page active" id="page-mission">
+    <div class="page-header">
+      <h1 class="page-title">Mission</h1>
+      <div class="header-actions">
+        <div class="search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Recherchez…
+        </div>
+      </div>
+    </div>
+
+<div class="row" style="align-items: flex-start;">
+
+  <!-- LEFT: Planification -->
+  <div class="col" style="flex:1.5">
+    <div class="card">
+      <div class="card-title">Planification nouvelle mission</div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <div class="field-label">Nom de la mission</div>
+          <input class="field" type="text" name="titre" placeholder="Ex : Analyse rails ligne 1276" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <div class="field-label">Date</div>
+            <input class="field" type="date" name="date_debut" required>
+          </div>
+          <div class="form-group">
+            <div class="field-label">Heure</div>
+            <input class="field" type="time" name="heure_debut" value="09:00">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="field-label">Type de mission</div>
+          <select class="field" name="type_mission">
+            <option>Sélectionner…</option>
+            <option>Analyse rails</option>
+            <option>Surveillance végétation</option>
+            <option>Inspection infrastructure</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <div class="field-label">Station de départ</div>
+            <select class="field" name="station_depart">
+              <option>Choisir une station…</option>
+              {% for station in stations %}
+                <option value="{{ station.id }}">{{ station.nom }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="field-label">Station d'arrivée</div>
+            <select class="field" name="station_arrivee">
+              <option>Choisir une station…</option>
+              {% for station in stations %}
+                <option value="{{ station.id }}">{{ station.nom }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="add-step" onclick="">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Étape intermédiaire
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <div class="field-label">Sélection du drone</div>
+            <select class="field" name="drone">
+              <option>Choisir un drone…</option>
+              {% for drone in drones %}
+                <option value="{{ drone.id }}">{{ drone.nom }} — {{ drone.get_statut_display }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="field-label">Sélection de l'équipe</div>
+            <select class="field" name="equipe">
+              <option>Choisir une équipe…</option>
+              <option>Équipe Alpha</option>
+              <option>Équipe Beta</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card-title" style="margin-top:6px;margin-bottom:12px;font-size:13px;color:var(--muted);">Paramètres avancés</div>
+
+        <div class="slider-row">
+          <span class="slider-label">Altitude</span>
+          <input type="range" min="10" max="120" value="50" name="altitude" oninput="this.nextElementSibling.textContent=this.value+'m'">
+          <span class="slider-val">50m</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Vitesse max</span>
+          <input type="range" min="5" max="60" value="30" name="vitesse" oninput="this.nextElementSibling.textContent=this.value+'km/h'">
+          <span class="slider-val">30km/h</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Passages</span>
+          <input type="range" min="1" max="10" value="2" name="passages" oninput="this.nextElementSibling.textContent=this.value">
+          <span class="slider-val">2</span>
+        </div>
+
+        <div class="form-row" style="margin-top:4px;">
+          <div class="form-group">
+            <div class="field-label">Mode</div>
+            <select class="field" name="mode">
+              <option>Sélectionner…</option>
+              <option>Autonome</option>
+              <option>Semi-autonome</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="field-label">Durée estimée</div>
+            <input class="field" type="text" name="duree_estimee" placeholder="— min" readonly>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+          <button class="btn-primary" type="submit">Valider la mission</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- RIGHT: Live + Historique -->
+  <div class="col" style="display:flex;flex-direction:column;gap:16px;">
+
+    <div class="card">
+      <div class="card-title">Missions en direct</div>
+      {% for mission in missions_live %}
+        <div class="mission-live">
+          <div class="mission-live-placeholder">
+            <div class="rail-art"></div>
+            <svg width="80" height="60" viewBox="0 0 80 60" opacity=".5">
+              <line x1="20" y1="10" x2="20" y2="50" stroke="white" stroke-width="3"/>
+              <line x1="60" y1="10" x2="60" y2="50" stroke="white" stroke-width="3"/>
+              <line x1="15" y1="15" x2="65" y2="15" stroke="white" stroke-width="1.5"/>
+              <line x1="15" y1="25" x2="65" y2="25" stroke="white" stroke-width="1.5"/>
+              <line x1="15" y1="35" x2="65" y2="35" stroke="white" stroke-width="1.5"/>
+              <line x1="15" y1="45" x2="65" y2="45" stroke="white" stroke-width="1.5"/>
+            </svg>
+            <div class="live-badge">DIRECT</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;font-size:14px;font-weight:600;">{{ mission.titre }}</div>
+        <div style="margin-top:4px;font-size:12px;color:var(--muted);">Drone {{ mission.drone.nom }} · Départ : {{ mission.station_depart.nom }} · En cours depuis {{ mission.duree }}</div>
+        <div style="margin-top:10px;">
+          <a class="link-more" onclick="showPage('donnees')">Voir détail de la mission →</a>
+        </div>
+      {% empty %}
+        <div style="text-align:center;color:var(--muted);padding:20px;">Aucune mission en cours</div>
+      {% endfor %}
+    </div>
+
+    <div class="card">
+      <div class="card-title">Historique des missions</div>
+      {% for mission in missions_historique %}
+        <div class="history-item">
+          {{ mission.titre }} <span style="color:var(--muted);font-size:12px;">{{ mission.date_debut|date:"d/m/Y" }}</span>
+        </div>
+      {% empty %}
+        <div class="history-item" style="opacity:.5;">—</div>
+        <div class="history-item" style="opacity:.3;">—</div>
+      {% endfor %}
+      <div style="margin-top:8px;text-align:right;">
+        <a class="link-more" onclick="showPage('donnees')">Voir plus →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+  </div>
+
+  <!-- ──────── PAGE : DRONE ──────── -->
+
+  <div class="page" id="page-drone">
+    <div class="page-header">
+      <h1 class="page-title">Drone</h1>
+      <div class="header-actions">
+        <div class="search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Rechercher un drone…
+        </div>
+      </div>
+    </div>
+
+<!-- Drone table -->
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>N° Drone</th>
+        <th>Lieux / Station</th>
+        <th>Statut</th>
+        <th>Modèle</th>
+        <th>Capteur</th>
+        <th>Batterie</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for drone in drones %}
+        <tr onclick="showDroneDetail('{{ drone.nom }}')">
+          <td><strong>{{ drone.nom }}</strong></td>
+          <td>{% if drone.station_actuelle %}{{ drone.station_actuelle.nom }}{% else %}—{% endif %}</td>
+          <td>
+            {% if drone.statut == 'READY' %}
+              <span class="badge badge-active"><span class="dot dot-green" style="width:6px;height:6px;"></span> Actif</span>
+            {% elif drone.statut == 'IN_MISSION' %}
+              <span class="badge badge-charge"><span class="dot dot-orange" style="width:6px;height:6px;"></span> En mission</span>
+            {% elif drone.statut == 'MAINTENANCE' %}
+              <span class="badge badge-maint"><span class="dot dot-red" style="width:6px;height:6px;"></span> Maintenance</span>
+            {% else %}
+              <span class="badge badge-inactive"><span class="dot dot-red" style="width:6px;height:6px;"></span> HS</span>
+            {% endif %}
+          </td>
+          <td>{{ drone.modele }}</td>
+          <td>Capteur LiDar</td>
+          <td><span class="dot dot-green"></span> {{ drone.batterie }}%</td>
+          <td class="td-arrow">›</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" style="text-align:center;color:var(--muted);">Aucun drone disponible</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div style="margin-top:12px;text-align:center;">
+    <a class="link-more">Voir la liste complète →</a>
+  </div>
+</div>
+
+<div class="row">
+  <!-- Incidents -->
+  <div class="col">
+    <div class="card" style="height:100%;">
+      <div class="card-title">Incidents récents</div>
+      {% for incident in incidents %}
+        <div class="incident-item">
+          <div class="incident-dot"></div>
+          <div>{{ incident.description }} — <em>{{ incident.date|date:"d/m/y" }}</em></div>
+        </div>
+      {% empty %}
+        <div class="incident-item" style="opacity:.4;">
+          <div class="incident-dot"></div>
+          <div>—</div>
+        </div>
+      {% endfor %}
+      <div style="margin-top:14px;">
+        <button class="btn-ghost" style="width:100%;justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Historique des incidents
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Maintenance -->
+  <div class="col">
+    <div class="card" style="height:100%;">
+      <div class="card-title">Maintenance</div>
+      {% for maint in maintenances %}
+        <div class="maint-item">
+          <span>{{ maint.description }}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+      {% empty %}
+        <div class="maint-item" style="opacity:.4;">Aucune maintenance programmée</div>
+      {% endfor %}
+      <div style="margin-top:14px;">
+        <button class="btn-ghost" style="width:100%;justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Historique maintenance
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Drone Detail panel (hidden by default) -->
+<div id="drone-detail" style="display:none;" class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+    <div class="card-title" id="drone-detail-title">Détail Drone</div>
+    <button class="btn-ghost" onclick="document.getElementById('drone-detail').style.display='none'">✕ Fermer</button>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">Incidents passés</div>
+      {% for incident in drone_incidents %}
+        <div class="incident-item"><div class="incident-dot"></div>{{ incident.description }} — {{ incident.date|date:"d/m/y" }}</div>
+      {% empty %}
+        <div class="incident-item"><div class="incident-dot"></div>Aucun incident</div>
+      {% endfor %}
+    </div>
+    <div class="col">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">Prochains passages maintenance</div>
+      {% for maint in drone_maintenances %}
+        <div class="maint-item">{{ maint.description }} <span style="color:var(--muted);font-size:12px;">{{ maint.date|date:"d/m/y" }}</span></div>
+      {% empty %}
+        <div class="maint-item">Aucune maintenance programmée</div>
+      {% endfor %}
+    </div>
+    <div class="col">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">Derniers vols</div>
+      {% for vol in drone_vols %}
+        <div class="history-item">{{ vol.mission.titre }} — {{ vol.date|date:"d/m/y" }}</div>
+      {% empty %}
+        <div class="history-item">Aucun vol récent</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+  </div>
+
+  <!-- ──────── PAGE : STATION ──────── -->
+
+  <div class="page" id="page-station">
+    <div class="page-header">
+      <h1 class="page-title">Station</h1>
+    </div>
+
+<div class="row" style="align-items:flex-start;">
+
+  <!-- Map -->
+  <div class="col" style="flex:1.2;">
+    <div class="card" style="padding:0;overflow:hidden;border-radius:var(--card-radius);">
+      <div class="map-placeholder">
+        <!-- Simple SVG map representation of France rail network -->
+        <svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
+          <rect width="500" height="300" fill="#dce8d4"/>
+          <!-- simplified France outline -->
+          <path d="M120,20 L200,10 L280,20 L360,60 L400,140 L380,220 L300,270 L200,280 L120,240 L80,180 L60,100 Z" fill="#c8dfc8" stroke="#aac8aa" stroke-width="1"/>
+          <!-- rail lines -->
+          <line x1="200" y1="140" x2="100" y2="80" stroke="#666" stroke-width="2"/>
+          <line x1="200" y1="140" x2="300" y2="80" stroke="#666" stroke-width="2"/>
+          <line x1="200" y1="140" x2="320" y2="180" stroke="#666" stroke-width="2"/>
+          <line x1="200" y1="140" x2="160" y2="220" stroke="#666" stroke-width="2"/>
+          <line x1="200" y1="140" x2="260" y2="240" stroke="#666" stroke-width="2"/>
+          <!-- stations -->
+          {% for station in stations %}
+            <circle cx="{{ station.longitude|add:200 }}" cy="{{ station.latitude|add:100 }}" r="5" fill="#C3002F" opacity=".8"/>
+            <circle cx="{{ station.longitude|add:200 }}" cy="{{ station.latitude|add:100 }}" r="10" fill="#C3002F" opacity=".2"/>
+            <text x="{{ station.longitude|add:210 }}" y="{{ station.latitude|add:98 }}" font-size="8" fill="#333" font-family="sans-serif">{{ station.nom }}</text>
+          {% endfor %}
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Log batteries + Défaillances -->
+  <div class="col" style="display:flex;flex-direction:column;gap:16px;">
+    <div class="card">
+      <div class="card-title">Log d'échange des batteries</div>
+      <table class="batt-table">
+        <thead>
+          <tr>
+            <th>N° Drone</th>
+            <th>Batterie déposée</th>
+            <th>Batterie empruntée</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in battery_logs %}
+            <tr><td>{{ log.drone.nom }}</td><td>{{ log.batterie_deposee }}</td><td>{{ log.batterie_empruntee }}</td><td class="td-arrow">›</td></tr>
+          {% empty %}
+            <tr><td colspan="4" style="text-align:center;color:var(--muted);">Aucun échange récent</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div style="margin-top:8px;">
+        <a class="link-more">Voir plus →</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Défaillances signalées</div>
+      {% for defaillance in defaillances %}
+        <div class="incident-item">
+          <div class="incident-dot"></div>
+          <div>{{ defaillance.description }}</div>
+        </div>
+      {% empty %}
+        <div class="incident-item" style="opacity:.4;">
+          <div class="incident-dot"></div>
+          <div>Aucune défaillance signalée</div>
+        </div>
+      {% endfor %}
+      <div style="margin-top:12px;">
+        <a class="link-more">Voir plus →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stations table -->
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Numéro</th>
+        <th>Lieux</th>
+        <th>Statut</th>
+        <th>Batteries chargées</th>
+        <th>En charge</th>
+        <th>Emplacements libres</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for station in stations %}
+        <tr>
+          <td><strong>{{ station.id }}</strong></td>
+          <td>{{ station.nom }} — {{ station.adresse }}</td>
+          <td>
+            {% if station.actif %}
+              <span class="badge badge-active">Active</span>
+            {% else %}
+              <span class="badge badge-inactive">Inactive</span>
+            {% endif %}
+          </td>
+          <td>{{ station.batteries_chargees|default:"—" }}</td>
+          <td>{{ station.en_charge|default:"—" }}</td>
+          <td>{{ station.emplacements_libres|default:"—" }}</td>
+          <td class="td-arrow">›</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" style="text-align:center;color:var(--muted);">Aucune station disponible</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div style="margin-top:12px;text-align:center;">
+    <a class="link-more">Voir la liste complète →</a>
+  </div>
+</div>
+
+  </div>
+
+  <!-- ──────── PAGE : DONNÉES ──────── -->
+
+  <div class="page" id="page-donnees">
+    <div class="page-header">
+      <h1 class="page-title">Données</h1>
+      <div class="header-actions">
+        <div class="tab-row">
+          <button class="tab-btn active">Toutes</button>
+          <button class="tab-btn">Végétation</button>
+          <button class="tab-btn">Rails</button>
+          <button class="tab-btn">Infrastructure</button>
+        </div>
+      </div>
+    </div>
+
+<!-- Colored rail map -->
+<div class="card" style="padding:0;overflow:hidden;">
+  <div style="padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-weight:600;font-size:15px;">Carte des anomalies</div>
+    <div style="display:flex;gap:16px;font-size:12px;align-items:center;">
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:12px;height:4px;background:#34C759;border-radius:2px;display:inline-block;"></span>Bon état</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:12px;height:4px;background:#FF9500;border-radius:2px;display:inline-block;"></span>Vigilance</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:12px;height:4px;background:#C3002F;border-radius:2px;display:inline-block;"></span>Critique</span>
+    </div>
+  </div>
+  <div style="height:280px;background:#e8f0e0;position:relative;overflow:hidden;">
+    <!-- Colored SVG rail map -->
+    <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+      <rect width="700" height="280" fill="#ddeadb"/>
+      <!-- terrain texture -->
+      <ellipse cx="350" cy="140" rx="280" ry="110" fill="#d0e3cc" opacity=".6"/>
+      <!-- Cities labels -->
+      <text x="340" y="148" font-size="11" fill="#444" font-family="sans-serif" font-weight="600">Lyon</text>
+      <text x="170" y="248" font-size="10" fill="#555" font-family="sans-serif">Saint-Étienne</text>
+      <text x="480" y="210" font-size="10" fill="#555" font-family="sans-serif">Chambéry</text>
+      <text x="530" y="90" font-size="10" fill="#555" font-family="sans-serif">Annecy</text>
+      <text x="580" y="150" font-size="10" fill="#555" font-family="sans-serif">An.</text>
+
+      <!-- Green lines (bon état) -->
+      <path d="M350,140 L200,60" stroke="#34C759" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M350,140 L280,200" stroke="#34C759" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M350,140 L420,80" stroke="#34C759" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M350,140 L500,160" stroke="#34C759" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+      <!-- Orange lines (vigilance) -->
+      <path d="M350,140 L260,250" stroke="#FF9500" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M350,140 L100,100" stroke="#FF9500" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M350,140 L500,80" stroke="#FF9500" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+      <!-- Red lines (critique) -->
+      <path d="M350,140 L600,100" stroke="#C3002F" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M350,140 L80,180" stroke="#C3002F" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M350,140 L600,200" stroke="#C3002F" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M350,140 L400,260" stroke="#C3002F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Anomalies table -->
+<div class="card">
+  <div class="card-title">Résultats d'analyse</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Nom mission</th>
+        <th>Lieu</th>
+        <th>Nature anomalie</th>
+        <th>Gravité</th>
+        <th>Score IA</th>
+        <th>Rapport</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for anomalie in anomalies %}
+        <tr>
+          <td><strong>{{ anomalie.mission.titre }}</strong></td>
+          <td>{{ anomalie.lieu }}</td>
+          <td>{{ anomalie.nature }}</td>
+          <td>
+            <div class="gravity-bar">
+              {% for i in anomalie.gravite|make_list %}
+                <div class="gbar {% if forloop.counter <= anomalie.gravite %}filled{% endif %}"></div>
+              {% endfor %}
+            </div>
+          </td>
+          <td><span class="score-ia">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            {{ anomalie.score_ia }}%
+          </span></td>
+          <td><button class="btn-pdf">Rapport PDF</button></td>
+          <td class="td-arrow">›</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" style="text-align:center;color:var(--muted);">Aucune anomalie détectée</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div style="margin-top:12px;">
+    <a class="link-more">Voir plus →</a>
+  </div>
+</div>
+
+  </div>
+
+</main>
+
+<script>
+  function showPage(id) {
+    // hide all pages
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+    document.getElementById('page-' + id).classList.add('active');
+    document.getElementById('nav-' + id).classList.add('active');
+  }
+
+  function showDroneDetail(nom) {
+    const panel = document.getElementById('drone-detail');
+    document.getElementById('drone-detail-title').textContent = 'Détail Drone ' + nom;
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // Init: show Mission page
+  showPage('mission');
+</script>
+
+</body>
+</html>

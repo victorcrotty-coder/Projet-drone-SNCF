@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Stations</title>
+    <link rel="stylesheet" href="{% static 'monapp/css/style.css' %}">
+</head>
+<body>
+    <h1>Stations</h1>
+    <a href="{% url 'logout' %}">Se déconnecter</a>
+    <ul>
+        {% for station in stations %}
+            <li>
+                <h2>{{ station.nom }}</h2>
+                <p><strong>Adresse:</strong> {{ station.adresse }}</p>
+                <p><strong>Coordonnées:</strong> {{ station.latitude }}, {{ station.longitude }}</p>
+                <p><strong>Créée le:</strong> {{ station.created_at|date:"d/m/Y H:i" }}</p>
+            </li>
+        {% empty %}
+            <li>Aucune station disponible.</li>
+        {% endfor %}
+    </ul>
+    <nav>
+        <a href="{% url 'accueil_list' %}">Accueil</a> |
+        <a href="{% url 'mission_list' %}">Missions</a> |
+        <a href="{% url 'drone_list' %}">Drones</a> |
+        <a href="{% url 'donnees_list' %}">Données</a> |
+        <a href="{% url 'message_list' %}">Messages</a>
+    </nav>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Missions</title>
+    <link rel="stylesheet" href="{% static 'monapp/css/style.css' %}">
+</head>
+<body>
+    <h1>Missions</h1>
+    <a href="{% url 'logout' %}">Se déconnecter</a>
+    <ul>
+        {% for mission in missions %}
+            <li>
+                <h2>{{ mission.titre }}</h2>
+                <p>{{ mission.description }}</p>
+                <p><strong>Statut:</strong> {{ mission.get_statut_display }}</p>
+                <p><strong>Début:</strong> {{ mission.date_debut|date:"d/m/Y" }}</p>
+                {% if mission.date_fin %}
+                    <p><strong>Fin:</strong> {{ mission.date_fin|date:"d/m/Y" }}</p>
+                {% endif %}
+                <p><strong>Créée le:</strong> {{ mission.created_at|date:"d/m/Y H:i" }}</p>
+            </li>
+        {% empty %}
+            <li>Aucune mission disponible.</li>
+        {% endfor %}
+    </ul>
+    <nav>
+        <a href="{% url 'accueil_list' %}">Accueil</a> |
+        <a href="{% url 'drone_list' %}">Drones</a> |
+        <a href="{% url 'station_list' %}">Stations</a> |
+        <a href="{% url 'donnees_list' %}">Données</a> |
+        <a href="{% url 'message_list' %}">Messages</a>
+    </nav>
+</body>
+</html>

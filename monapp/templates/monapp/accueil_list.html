@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil</title>
+    <link rel="stylesheet" href="{% static 'monapp/css/style.css' %}">
+</head>
+<body>
+    <h1>Accueil</h1>
+    <a href="{% url 'logout' %}">Se déconnecter</a>
+    <ul>
+        {% for accueil in accueils %}
+            <li>
+                <h2>{{ accueil.titre }}</h2>
+                <p>{{ accueil.contenu }}</p>
+                {% if accueil.image_url %}
+                    <img src="{{ accueil.image_url }}" alt="{{ accueil.titre }}" style="max-width: 300px;">
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>Aucun contenu d'accueil disponible.</li>
+        {% endfor %}
+    </ul>
+    <nav>
+        <a href="{% url 'mission_list' %}">Missions</a> |
+        <a href="{% url 'drone_list' %}">Drones</a> |
+        <a href="{% url 'station_list' %}">Stations</a> |
+        <a href="{% url 'donnees_list' %}">Données</a> |
+        <a href="{% url 'message_list' %}">Messages</a>
+    </nav>
+</body>
+</html>

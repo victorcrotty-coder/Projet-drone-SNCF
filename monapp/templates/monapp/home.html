@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Accueil</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'monapp/css/style.css' %}">
+</head>
+<body>
+  <h1>Bienvenue, {{ request.user.get_full_name|default:request.user.username }}</h1>
+  <p>Vous êtes connecté en tant que {{ request.user.email }}</p>
+  <p><a href="{% url 'logout' %}">Se déconnecter</a></p>
+
+  <nav>
+    <a href="{% url 'accueil_list' %}">Accueil</a> |
+    <a href="{% url 'mission_list' %}">Missions</a> |
+    <a href="{% url 'drone_list' %}">Drones</a> |
+    <a href="{% url 'station_list' %}">Stations</a> |
+    <a href="{% url 'donnees_list' %}">Données</a> |
+    <a href="{% url 'message_list' %}">Messages</a>
+  </nav>
+</body>
+</html>

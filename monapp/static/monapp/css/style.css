@@ -1,0 +1,75 @@
+/* Styles de base pour monapp */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    color: #333;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background-color: #fff;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+nav a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+    
+/* Styles pour les statuts */
+.status-ready {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.status-mission {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.status-maintenance {
+    color: #fd7e14;
+    font-weight: bold;
+}
+
+.status-hs {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Styles pour les messages non lus */
+li.unread {
+    border-left: 5px solid #007bff;
+    background-color: #e7f3ff;
+}
+
+/* Améliorations générales */
+li h2 {
+    margin-top: 0;
+    color: #495057;
+}
+
+li p {
+    margin: 5px 0;
+    color: #6c757d;
+}
+
+li strong {
+    color: #343a40;
+}

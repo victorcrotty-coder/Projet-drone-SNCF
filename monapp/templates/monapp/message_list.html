@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Messages</title>
+    <link rel="stylesheet" href="{% static 'monapp/css/style.css' %}">
+</head>
+<body>
+    <h1>Messages</h1>
+    <a href="{% url 'logout' %}">Se déconnecter</a>
+    <ul>
+        {% for message in messages %}
+            <li class="{% if not message.lu %}unread{% endif %}">
+                <h2>{{ message.titre }}</h2>
+                <p>{{ message.contenu }}</p>
+                <p><strong>Type:</strong> {{ message.get_type_message_display }}</p>
+                <p><strong>Lu:</strong> {% if message.lu %}Oui{% else %}Non{% endif %}</p>
+                <p><strong>Date:</strong> {{ message.created_at|date:"d/m/Y H:i" }}</p>
+            </li>
+        {% empty %}
+            <li>Aucun message disponible.</li>
+        {% endfor %}
+    </ul>
+    <nav>
+        <a href="{% url 'accueil_list' %}">Accueil</a> |
+        <a href="{% url 'mission_list' %}">Missions</a> |
+        <a href="{% url 'drone_list' %}">Drones</a> |
+        <a href="{% url 'station_list' %}">Stations</a> |
+        <a href="{% url 'donnees_list' %}">Données</a>
+    </nav>
+</body>
+</html>

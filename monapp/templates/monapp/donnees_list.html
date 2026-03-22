@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Données</title>
+    <link rel="stylesheet" href="{% static 'monapp/css/style.css' %}">
+</head>
+<body>
+    <h1>Données</h1>
+    <a href="{% url 'logout' %}">Se déconnecter</a>
+    <ul>
+        {% for donnee in donnees %}
+            <li>
+                <h2>{{ donnee.get_type_donnee_display }}</h2>
+                <p><strong>Valeur:</strong> {{ donnee.valeur }} {{ donnee.unite }}</p>
+                <p><strong>Station:</strong> {{ donnee.station.nom }} ({{ donnee.station.adresse }})</p>
+                <p><strong>Date:</strong> {{ donnee.timestamp|date:"d/m/Y H:i:s" }}</p>
+            </li>
+        {% empty %}
+            <li>Aucune donnée disponible.</li>
+        {% endfor %}
+    </ul>
+    <nav>
+        <a href="{% url 'accueil_list' %}">Accueil</a> |
+        <a href="{% url 'mission_list' %}">Missions</a> |
+        <a href="{% url 'drone_list' %}">Drones</a> |
+        <a href="{% url 'station_list' %}">Stations</a> |
+        <a href="{% url 'message_list' %}">Messages</a>
+    </nav>
+</body>
+</html>

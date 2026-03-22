@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Drones</title>
+    <link rel="stylesheet" href="{% static 'monapp/css/style.css' %}">
+</head>
+<body>
+    <h1>Drones</h1>
+    <a href="{% url 'logout' %}">Se déconnecter</a>
+    <ul>
+        {% for drone in drones %}
+            <li>
+                <h2>{{ drone.nom }}</h2>
+                <p><strong>Modèle:</strong> {{ drone.modele }}</p>
+                <p><strong>Numéro de série:</strong> {{ drone.numero_serie }}</p>
+                <p><strong>Statut:</strong> <span class="{% if drone.statut == 'READY' %}status-ready{% elif drone.statut == 'IN_MISSION' %}status-mission{% elif drone.statut == 'MAINTENANCE' %}status-maintenance{% else %}status-hs{% endif %}">{{ drone.get_statut_display }}</span></p>
+                <p><strong>Créé le:</strong> {{ drone.created_at|date:"d/m/Y H:i" }}</p>
+            </li>
+        {% empty %}
+            <li>Aucun drone disponible.</li>
+        {% endfor %}
+    </ul>
+    <nav>
+        <a href="{% url 'accueil_list' %}">Accueil</a> |
+        <a href="{% url 'mission_list' %}">Missions</a> |
+        <a href="{% url 'station_list' %}">Stations</a> |
+        <a href="{% url 'donnees_list' %}">Données</a> |
+        <a href="{% url 'message_list' %}">Messages</a>
+    </nav>
+</body>
+</html>

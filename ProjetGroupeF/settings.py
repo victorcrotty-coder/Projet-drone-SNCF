@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "monapp",
     "tournees",
     "droneSNCF",
 ]
@@ -120,3 +121,6 @@ STATIC_URL = "static/"
 
 
 CSRF_TRUSTED_ORIGINS = ['https://localhost:8000']
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/login/"
